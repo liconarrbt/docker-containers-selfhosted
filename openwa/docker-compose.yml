@@ -15,6 +15,8 @@ services:
       - WA_API_KEY=${OPENWA_API_KEY:-tu_clave_secreta_aqui}
       - WA_SESSION_ID=${OPENWA_SESSION_ID:-sesion-whatsapp}
       - WA_USER_DATA_DIR=/sessions
+      - WA_POPUP=false
+      - WA_CUSTOM_USER_AGENT=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36
     command:
       - "--api-key"
       - "${OPENWA_API_KEY:-tu_clave_secreta_aqui}"
@@ -22,4 +24,6 @@ services:
       - "8080"
       - "--cache-path"
       - "/sessions"
+      - "--custom-user-agent"
+      - "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
       - "--socket"
