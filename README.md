@@ -1,9 +1,10 @@
 # Docker Containers - Servicios Independientes
 
-Este repositorio contiene la configuración en Docker Compose para desplegar y administrar dos servicios independientes, cada uno en su propio directorio:
+Este repositorio contiene la configuración en Docker Compose para desplegar y administrar servicios independientes, cada uno en su propio directorio:
 
 1. **`openwa/`**: Servidor y API para automatización de WhatsApp con soporte para sesiones persistentes.
 2. **`stirling/`**: Plataforma web de código abierto para visualización, edición, conversión y manipulación de archivos PDF.
+3. **`n8n/`**: Plataforma de automatización de flujos de trabajo (workflow automation) conectada a PostgreSQL.
 
 ---
 
@@ -26,6 +27,11 @@ Este repositorio contiene la configuración en Docker Compose para desplegar y a
 │   ├── logs/                # Registros de eventos
 │   ├── pipeline/            # Configuraciones de flujos de trabajo automatizados
 │   └── tessdata/            # Archivos de idioma para reconocimiento óptico (OCR)
+│
+├── n8n/
+│   ├── docker-compose.yml   # Definición del servicio n8n
+│   ├── .env.example         # Plantilla de variables de entorno (n8n + PostgreSQL)
+│   └── .env                 # Variables de entorno activas (ignorado en git)
 │
 ├── .gitignore               # Configuración de exclusiones de git
 └── README.md                # Documentación del proyecto
@@ -77,6 +83,39 @@ docker compose up -d
 ```
 
 * **URL local:** [http://localhost:8080](http://localhost:8080)
+* **Ver Logs:**
+  ```bash
+  docker compose logs -f
+  ```
+* **Detener el servicio:**
+  ```bash
+  docker compose down
+  ```
+
+---
+
+## ⚡ 3. Servicio n8n (con PostgreSQL)
+
+El servicio n8n está configurado para conectarse a una base de datos PostgreSQL estándar (`postgres:latest`). Utiliza un volumen con nombre (`n8n_data`) administrado internamente por Docker para almacenar credenciales y ejecuciones sin crear carpetas locales.
+
+### Conexión a tu contenedor `postgres:latest`
+* Si ejecutas tu contenedor PostgreSQL exponiendo el puerto `5432:5432` en tu Mac:
+  ```bash
+  docker run -d --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=tu_password -e POSTGRES_DB=n8n postgres:latest
+  ```
+  En `n8n/.env`, mantén el host como:
+  ```ini
+  DB_POSTGRESDB_HOST=host.docker.internal
+  ```
+  *(En macOS, `host.docker.internal` permite a los contenedores conectarse a los puertos expuestos en el sistema host)*.
+
+### Iniciar el servicio
+```bash
+cd n8n
+docker compose up -d
+```
+
+* **URL local:** [http://localhost:5678](http://localhost:5678)
 * **Ver Logs:**
   ```bash
   docker compose logs -f
