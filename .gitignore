@@ -1,0 +1,26 @@
+# Environment variables
+.env
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Open-WA persistent sessions and user data
+openwa/sessions/*
+!openwa/sessions/.gitkeep
+
+# Stirling-PDF persistent directories
+stirling/configs/*
+!stirling/configs/.gitkeep
+stirling/logs/*
+!stirling/logs/.gitkeep
+stirling/customFiles/*
+!stirling/customFiles/.gitkeep
+stirling/pipeline/*
+!stirling/pipeline/.gitkeep
+stirling/tessdata/*
+!stirling/tessdata/.gitkeep
