@@ -1,0 +1,18 @@
+services:
+  stirling-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    container_name: stirling-pdf
+    restart: unless-stopped
+    ports:
+      - "${STIRLING_PORT:-8080}:8080"
+    volumes:
+      - ./tessdata:/usr/share/tessdata
+      - ./configs:/configs
+      - ./logs:/logs
+      - ./customFiles:/customFiles
+      - ./pipeline:/pipeline
+    environment:
+      - SECURITY_ENABLELOGIN=${STIRLING_ENABLE_LOGIN:-false}
+      - SYSTEM_DEFAULTLOCALE=${STIRLING_DEFAULT_LOCALE:-es-ES}
+      - SYSTEM_GOOGLEVISIBILITY=false
+      - SYSTEMFILEUPLOADLIMIT=${STIRLING_MAX_FILE_SIZE:-2GB}
