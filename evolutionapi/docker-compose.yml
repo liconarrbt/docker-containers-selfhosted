@@ -1,0 +1,48 @@
+services:
+  # ==========================================
+  # Servidor Evolution API (v2)
+  # API WhatsApp basada en Baileys (ligera, ideal para ARM/SBCs y n8n)
+  # ==========================================
+  evolution_api:
+    image: atendai/evolution-api:latest
+    container_name: evolution_api
+    restart: unless-stopped
+    ports:
+      - "${EVOLUTION_PORT:-8085}:8080"
+    env_file:
+      - .env
+    environment:
+      - DOCKER_ENV=true
+    volumes:
+      - evolution_instances:/evolution/instances
+      - evolution_store:/evolution/store
+    depends_on:
+      - redis
+
+  # ==========================================
+  # Caché Redis (ultraligero ~15MB RAM)
+  # ==========================================
+  redis:
+    image: redis:alpine
+    container_name: evolution_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - evolution_redis_data:/data
+
+  # ==========================================
+  # Evolution Manager (Panel visual web opcional)
+  # ==========================================
+  evolution_manager:
+    image: evoapicloud/evolution-manager:latest
+    container_name: evolution_manager
+    restart: unless-stopped
+    ports:
+      - "${EVOLUTION_MANAGER_PORT:-8086}:80"
+    depends_on:
+      - evolution_api
+
+volumes:
+  evolution_instances:
+  evolution_store:
+  evolution_redis_data:

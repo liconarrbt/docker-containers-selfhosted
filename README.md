@@ -2,9 +2,10 @@
 
 Este repositorio contiene la configuración en Docker Compose para desplegar y administrar servicios independientes, cada uno en su propio directorio:
 
-1. **`openwa/`**: Servidor y API para automatización de WhatsApp con soporte para sesiones persistentes.
-2. **`stirling/`**: Plataforma web de código abierto para visualización, edición, conversión y manipulación de archivos PDF.
-3. **`n8n/`**: Plataforma de automatización de flujos de trabajo (workflow automation) conectada a PostgreSQL.
+1. **`openwa/`**: Servidor y API para automatización de WhatsApp con soporte para sesiones persistentes (Puppeteer).
+2. **`evolutionapi/`**: API de WhatsApp ligera v2 (Baileys) con soporte multi-instancia, Redis y panel visual Evolution Manager.
+3. **`stirling/`**: Plataforma web de código abierto para visualización, edición, conversión y manipulación de archivos PDF.
+4. **`n8n/`**: Plataforma de automatización de flujos de trabajo (workflow automation) conectada a PostgreSQL.
 
 ---
 
@@ -17,6 +18,11 @@ Este repositorio contiene la configuración en Docker Compose para desplegar y a
 │   ├── .env.example         # Plantilla de variables de entorno para Open-WA
 │   ├── .env                 # Variables de entorno activas (ignorado en git)
 │   └── sessions/            # Almacenamiento persistente de sesión y caché de WhatsApp
+│
+├── evolutionapi/
+│   ├── docker-compose.yml   # Definición de Evolution API + Redis + Evolution Manager
+│   ├── .env.example         # Plantilla de variables para Evolution API
+│   └── .env                 # Variables de entorno activas (ignorado en git)
 │
 ├── stirling/
 │   ├── docker-compose.yml   # Definición del servicio Stirling-PDF
@@ -66,7 +72,37 @@ docker compose up -d
 
 ---
 
-## 📄 2. Servicio Stirling-PDF
+## 🚀 2. Servicio Evolution API (Baileys v2)
+
+Evolution API es una pasarela WhatsApp de alto rendimiento construida sobre Baileys (WebSockets puros, sin navegador Chrome pesado), perfecta para arquitecturas ARM (Raspberry Pi / Orange Pi). Incluye un contenedor Redis ultraligero y el panel web opcional **Evolution Manager**.
+
+### Configuración (`evolutionapi/.env`)
+```ini
+EVOLUTION_PORT=8085           # Puerto en el host para la API
+EVOLUTION_MANAGER_PORT=8086   # Puerto en el host para el panel Evolution Manager
+AUTHENTICATION_API_KEY=tu_key # Clave API secreta global (definida por ti)
+```
+
+### Iniciar el servicio
+```bash
+cd evolutionapi
+docker compose up -d
+```
+
+* **API Explorer / Documentación:** [http://localhost:8085](http://localhost:8085)
+* **Panel Evolution Manager:** [http://localhost:8086](http://localhost:8086)
+* **Ver Logs / QR:**
+  ```bash
+  docker compose logs -f evolution_api
+  ```
+* **Detener el servicio:**
+  ```bash
+  docker compose down
+  ```
+
+---
+
+## 📄 3. Servicio Stirling-PDF
 
 ### Configuración (`stirling/.env`)
 ```ini
@@ -94,7 +130,7 @@ docker compose up -d
 
 ---
 
-## ⚡ 3. Servicio n8n (con PostgreSQL)
+## ⚡ 4. Servicio n8n (con PostgreSQL)
 
 El servicio n8n está configurado para conectarse a una base de datos PostgreSQL estándar (`postgres:latest`). Utiliza un volumen con nombre (`n8n_data`) administrado internamente por Docker para almacenar credenciales y ejecuciones sin crear carpetas locales.
 
